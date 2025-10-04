@@ -1,5 +1,6 @@
 ---
 // Import any necessary dependencies
+import ThemeSwitcher from './theme/ThemeSwitcher.astro';
 ---
 
 <header class="bg-blue-500 dark:bg-blue-700 text-white p-4 shadow-md transition-colors duration-300">
@@ -19,6 +20,11 @@
         </nav>
       </div>
       <h1 class="text-xl font-bold"><a href="/" class="hover:underline">Tailspin Shelter</a></h1>
+    </div>
+    
+    <!-- Theme Switcher in the top right -->
+    <div class="theme-switcher-container">
+      <ThemeSwitcher />
     </div>
   </div>
 </header>

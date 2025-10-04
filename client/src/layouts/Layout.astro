@@ -1,6 +1,8 @@
 ---
 import Header from "../components/Header.astro"
+import PuppyCursorFollower from "../components/animations/PuppyCursorFollower.astro"
 import "../styles/global.css"
+import "../styles/themes.css"
 
 interface Props {
   title?: string;
@@ -17,10 +19,15 @@ const { title = "Tailspin Shelter" } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <script is:inline>
+            // Apply saved theme immediately to prevent flash of default theme
+            const savedTheme = localStorage.getItem('site-theme') || 'default';
+            document.documentElement.classList.add(`theme-${savedTheme}`);
+        </script>
         <!-- Preconnect to improve font loading -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&family=Palatino&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
     </head>
     <body class="min-h-screen bg-slate-900 text-white transition-colors duration-300 m-0 w-full h-full font-sans">
         <Header />
@@ -29,6 +36,7 @@ const { title = "Tailspin Shelter" } = Astro.props;
                 <slot />
             </div>
         </main>
+        <PuppyCursorFollower />
     </body>
 </html>
 

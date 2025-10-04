@@ -1,0 +1,348 @@
+---
+---
+
+<div class="theme-switcher relative inline-block">
+  <button id="theme-dropdown-toggle" class="theme-dropdown-button flex items-center gap-2 p-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors">
+    <span id="current-theme">Default</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+  
+  <div id="theme-dropdown" class="hidden absolute right-0 mt-2 w-60 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded shadow-lg z-50 transition-all duration-300">
+    <div class="p-2">
+      <div class="text-xs text-slate-500 dark:text-slate-400 mb-1 pl-2">THEMES</div>
+      <!-- Theme options with previews -->
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="default">
+        <div class="theme-preview bg-slate-900 border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-blue-500 w-4 h-2"></div>
+        </div>
+        <span>Default</span>
+      </div>
+      
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="80s-retro">
+        <div class="theme-preview bg-purple-900 border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-pink-500 w-4 h-2"></div>
+        </div>
+        <span>80s Retro 🕹️</span>
+      </div>
+      
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="terminal-classic">
+        <div class="theme-preview bg-black border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-green-500 w-4 h-2"></div>
+        </div>
+        <span>Terminal Classic 💻</span>
+      </div>
+      
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="hand-sketched">
+        <div class="theme-preview bg-gray-100 border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-gray-800 w-4 h-2 rounded-full"></div>
+        </div>
+        <span>Hand-Sketched ✏️</span>
+      </div>
+      
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="steampunk">
+        <div class="theme-preview bg-amber-900 border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-amber-500 w-4 h-2 rounded-sm"></div>
+        </div>
+        <span>Steampunk ⚙️</span>
+      </div>
+      
+      <div class="theme-option flex items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer" data-theme="fantasy-realm">
+        <div class="theme-preview bg-emerald-900 border border-slate-700 w-8 h-8 rounded mr-2 flex items-center justify-center overflow-hidden">
+          <div class="bg-blue-400 w-4 h-2"></div>
+        </div>
+        <span>Fantasy Realm 🧙</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Document ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-dropdown-toggle');
+    const themeDropdown = document.getElementById('theme-dropdown');
+    const currentThemeText = document.getElementById('current-theme');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const htmlElement = document.documentElement;
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('site-theme') || 'default';
+    applyTheme(savedTheme);
+    
+    // Set initial current theme text
+    if (currentThemeText) {
+      if (savedTheme === 'default') {
+        currentThemeText.textContent = 'Default';
+      } else if (savedTheme === '80s-retro') {
+        currentThemeText.textContent = '80s Retro 🕹️';
+      } else if (savedTheme === 'terminal-classic') {
+        currentThemeText.textContent = 'Terminal Classic 💻';
+      } else if (savedTheme === 'hand-sketched') {
+        currentThemeText.textContent = 'Hand-Sketched ✏️';
+      } else if (savedTheme === 'steampunk') {
+        currentThemeText.textContent = 'Steampunk ⚙️';
+      } else if (savedTheme === 'fantasy-realm') {
+        currentThemeText.textContent = 'Fantasy Realm 🧙';
+      }
+    }
+    
+    // Toggle dropdown visibility when button is clicked
+    if (themeToggle && themeDropdown) {
+      themeToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        themeDropdown.classList.toggle('hidden');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (event) => {
+        const isClickInside = themeToggle.contains(event.target as Node) || themeDropdown.contains(event.target as Node);
+        if (!isClickInside && !themeDropdown.classList.contains('hidden')) {
+          themeDropdown.classList.add('hidden');
+        }
+      });
+    }
+    
+    // Add click event to theme options
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.getAttribute('data-theme') || 'default';
+        
+        // Save theme preference
+        localStorage.setItem('site-theme', theme);
+        
+        // Apply the selected theme
+        applyTheme(theme);
+        
+        // Update current theme text
+        if (currentThemeText) {
+          currentThemeText.textContent = option.querySelector('span')?.textContent || 'Default';
+        }
+        
+        // Close dropdown
+        if (themeDropdown) {
+          themeDropdown.classList.add('hidden');
+        }
+      });
+    });
+    
+    // Function to apply theme
+    function applyTheme(theme: string) {
+      // Remove all theme classes
+      htmlElement.classList.remove(
+        'theme-default',
+        'theme-80s-retro',
+        'theme-terminal-classic',
+        'theme-hand-sketched',
+        'theme-steampunk',
+        'theme-fantasy-realm'
+      );
+      
+      // Add the selected theme class
+      htmlElement.classList.add(`theme-${theme}`);
+      
+      // Apply theme-specific customizations
+      const body = document.body;
+      
+      // Reset transitions for smooth theme change
+      body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+    }
+  });
+</script>
+
+<style is:global>
+  /* Theme Transitions */
+  body, header, main, button, a, div, nav {
+    transition: all 0.5s ease;
+  }
+  
+  /* Default Theme - Already defined in Layout.astro */
+  
+  /* 80s Retro Theme */
+  html.theme-80s-retro {
+    --font-sans: 'VT323', 'Press Start 2P', monospace;
+  }
+  
+  html.theme-80s-retro body {
+    background-color: #2b0549;
+    color: #00f9ff;
+    background-image: 
+      linear-gradient(rgba(123, 0, 255, 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123, 0, 255, 0.2) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  
+  html.theme-80s-retro header {
+    background: linear-gradient(90deg, #ff00aa, #00f9ff);
+    color: #000;
+    text-shadow: 2px 2px 0 #ff00aa;
+    box-shadow: 0 4px 0 rgba(255, 0, 170, 0.5);
+  }
+  
+  html.theme-80s-retro button, 
+  html.theme-80s-retro a.button {
+    background: #ff00aa;
+    color: #00f9ff;
+    border: 2px solid #00f9ff;
+    text-shadow: 1px 1px 0 #000;
+    box-shadow: 3px 3px 0 #00f9ff;
+    transform: translate(-3px, -3px);
+  }
+  
+  html.theme-80s-retro button:hover, 
+  html.theme-80s-retro a.button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 1px 1px 0 #00f9ff;
+  }
+  
+  /* Terminal Classic Theme */
+  html.theme-terminal-classic {
+    --font-sans: 'Courier New', monospace;
+  }
+  
+  html.theme-terminal-classic body {
+    background-color: #000;
+    color: #0f0;
+    position: relative;
+  }
+  
+  html.theme-terminal-classic body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 0, 0.1),
+      rgba(0, 255, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+  
+  html.theme-terminal-classic header {
+    background-color: #001100;
+    color: #0f0;
+    border-bottom: 1px solid #0f0;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  }
+  
+  html.theme-terminal-classic button,
+  html.theme-terminal-classic a.button {
+    background-color: #001100;
+    color: #0f0;
+    border: 1px solid #0f0;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  }
+  
+  html.theme-terminal-classic a {
+    color: #0f0;
+    text-decoration: underline;
+  }
+  
+  /* Hand-Sketched Theme */
+  html.theme-hand-sketched {
+    --font-sans: 'Comic Sans MS', 'Comic Neue', cursive;
+  }
+  
+  html.theme-hand-sketched body {
+    background-color: #f5f5f0;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d3d3d3' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    color: #333;
+  }
+  
+  html.theme-hand-sketched header,
+  html.theme-hand-sketched button,
+  html.theme-hand-sketched a.button,
+  html.theme-hand-sketched div.card {
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 #333;
+    position: relative;
+    transform: rotate(-0.5deg);
+  }
+  
+  html.theme-hand-sketched button:hover,
+  html.theme-hand-sketched a.button:hover {
+    transform: rotate(0.5deg) scale(1.05);
+  }
+  
+  html.theme-hand-sketched header {
+    background-color: #fff;
+    color: #333;
+  }
+  
+  /* Steampunk Theme */
+  html.theme-steampunk {
+    --font-sans: 'Georgia', 'Times New Roman', serif;
+  }
+  
+  html.theme-steampunk body {
+    background-color: #2c2520;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23aa8959' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    color: #d9bb91;
+  }
+  
+  html.theme-steampunk header {
+    background-color: #462f1d;
+    color: #d9bb91;
+    border: 2px solid #6e4a1f;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    box-shadow: 
+      inset 0 0 10px rgba(217, 187, 145, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  html.theme-steampunk button,
+  html.theme-steampunk a.button {
+    background: linear-gradient(to bottom, #926d3e, #6e4a1f);
+    color: #d9bb91;
+    border: 1px solid #d9bb91;
+    border-radius: 5px;
+    box-shadow: 
+      inset 0 0 5px rgba(217, 187, 145, 0.5),
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Fantasy Realm Theme */
+  html.theme-fantasy-realm {
+    --font-sans: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  }
+  
+  html.theme-fantasy-realm body {
+    background-color: #0a1f2e;
+    background-image: 
+      radial-gradient(circle at top right, #1a3b4d, transparent 400px),
+      radial-gradient(circle at bottom left, #1a3b4d, transparent 400px);
+    color: #e5ddd0;
+  }
+  
+  html.theme-fantasy-realm header {
+    background: linear-gradient(to right, #1a3b4d, #2d5e78, #1a3b4d);
+    color: #e5ddd0;
+    border-bottom: 1px solid #4a90a8;
+    box-shadow: 0 0 15px rgba(74, 144, 168, 0.5);
+  }
+  
+  html.theme-fantasy-realm button,
+  html.theme-fantasy-realm a.button {
+    background: linear-gradient(to bottom, #2d5e78, #1a3b4d);
+    color: #e5ddd0;
+    border: 1px solid #4a90a8;
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(74, 144, 168, 0.5);
+  }
+  
+  html.theme-fantasy-realm button:hover,
+  html.theme-fantasy-realm a.button:hover {
+    background: linear-gradient(to bottom, #376f8c, #2d5e78);
+    box-shadow: 0 0 12px rgba(74, 144, 168, 0.8);
+  }
+</style>

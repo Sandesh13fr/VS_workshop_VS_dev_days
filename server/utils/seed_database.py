@@ -12,49 +12,80 @@ from flask import Flask
 from models import init_db, db, Breed, Dog
 from models.dog import AdoptionStatus
 
+# Import logging
+from utils.logging.config import configure_logging, get_logger
+
+# Configure logging
+log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs')
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+    
+configure_logging(log_level="INFO")
+logger = get_logger(__name__)
+
 def create_app():
     """Create and configure Flask app for database operations"""
+    logger.info("Creating Flask application for database operations")
+    
     app = Flask(__name__)
     
     # Get the server directory path (one level up from utils)
     server_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_path = os.path.join(server_dir, "dogshelter.db")
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(server_dir, "dogshelter.db")}'
+    logger.debug(f"Using database at: {db_path}")
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Initialize the database with the app
-    init_db(app)
+    try:
+        init_db(app)
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}", exc_info=True)
+        raise
     
     return app
 
 def create_breeds():
     """Seed the database with breeds from the CSV file"""
+    logger.info("Starting breed data seeding process")
+    
     app = create_app()
     
     # Path to the CSV file
     csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
                            'models', 'breeds.csv')
+    logger.debug(f"Using breeds CSV file: {csv_path}")
     
     with app.app_context():
-        # Check if breeds already exist
-        existing_breeds = Breed.query.count()
-        if existing_breeds > 0:
-            print(f"Database already contains {existing_breeds} breeds. Skipping seed.")
-            return
-        
-        # Read the CSV file and add breeds to the database
-        with open(csv_path, 'r') as file:
-            csv_reader = csv.DictReader(file)
-            for row in csv_reader:
-                breed = Breed(name=row['Breed'], description=row['Description'])
-                db.session.add(breed)
+        try:
+            # Check if breeds already exist
+            existing_breeds = Breed.query.count()
+            if existing_breeds > 0:
+                logger.info(f"Database already contains {existing_breeds} breeds. Skipping seed.")
+                return
             
-            # Commit the changes
-            db.session.commit()
-            
-        # Verify the seeding
-        breed_count = Breed.query.count()
-        print(f"Successfully seeded {breed_count} breeds to the database.")
+            # Read the CSV file and add breeds to the database
+            breed_count = 0
+            with open(csv_path, 'r') as file:
+                csv_reader = csv.DictReader(file)
+                for row in csv_reader:
+                    breed = Breed(name=row['Breed'], description=row['Description'])
+                    db.session.add(breed)
+                    breed_count += 1
+                    logger.debug(f"Added breed: {row['Breed']}")
+                
+                # Commit the changes
+                logger.debug(f"Committing {breed_count} breeds to database")
+                db.session.commit()
+                
+            # Verify the seeding
+            breed_count = Breed.query.count()
+            logger.info(f"Successfully seeded {breed_count} breeds to the database.")
+        except Exception as e:
+            logger.error(f"Error seeding breeds: {str(e)}", exc_info=True)
+            raise
 
 def create_dogs():
     """Seed the database with dogs from the CSV file, ensuring at least 3 dogs per breed"""

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dog Shelter</title>
+    <style>
+        .dogs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .dog-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .filters {
+            padding: 20px;
+            background: #f5f5f5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="filters">
+        <select id="breedFilter">
+            <option value="">All Breeds</option>
+        </select>
+        <label>
+            <input type="checkbox" id="availableFilter"> Show only available dogs
+        </label>
+    </div>
+    <div id="dogsGrid" class="dogs-grid"></div>
+
+    <script>
+        async function loadBreeds() {
+            const response = await fetch('/api/breeds');
+            const breeds = await response.json();
+            const select = document.getElementById('breedFilter');
+            breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed.id;
+                option.textContent = breed.name;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadDogs() {
+            const breedId = document.getElementById('breedFilter').value;
+            const available = document.getElementById('availableFilter').checked;
+            
+            const params = new URLSearchParams();
+            if (breedId) params.append('breed_id', breedId);
+            if (available) params.append('available', 'true');
+            
+            const response = await fetch(`/api/dogs?${params}`);
+            const dogs = await response.json();
+            
+            const grid = document.getElementById('dogsGrid');
+            grid.innerHTML = '';
+            
+            dogs.forEach(dog => {
+                const card = document.createElement('div');
+                card.className = 'dog-card';
+                card.innerHTML = `
+                    <h3>${dog.name}</h3>
+                    <p>Breed: ${dog.breed}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Initial load
+        loadBreeds();
+        loadDogs();
+
+        // Add event listeners for auto-refresh
+        document.getElementById('breedFilter').addEventListener('change', loadDogs);
+        document.getElementById('availableFilter').addEventListener('change', loadDogs);
+    </script>
+</body>
+</html>

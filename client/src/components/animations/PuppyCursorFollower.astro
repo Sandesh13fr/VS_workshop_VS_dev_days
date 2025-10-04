@@ -1,0 +1,265 @@
+---
+---
+
+<div id="puppy-cursor-follower" class="hidden md:block">
+  <div class="puppy-container">
+    <div class="puppy">
+      <div class="head">
+        <div class="ears">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+        </div>
+        <div class="face">
+          <div class="eyes">
+            <div class="eye left">
+              <div class="pupil"></div>
+            </div>
+            <div class="eye right">
+              <div class="pupil"></div>
+            </div>
+          </div>
+          <div class="muzzle">
+            <div class="nose"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Wait for DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const puppy = document.querySelector('#puppy-cursor-follower');
+    const leftPupil = document.querySelector('#puppy-cursor-follower .eye.left .pupil') as HTMLElement;
+    const rightPupil = document.querySelector('#puppy-cursor-follower .eye.right .pupil') as HTMLElement;
+    const leftEar = document.querySelector('#puppy-cursor-follower .ear.left') as HTMLElement;
+    const rightEar = document.querySelector('#puppy-cursor-follower .ear.right') as HTMLElement;
+    const head = document.querySelector('#puppy-cursor-follower .head') as HTMLElement;
+    
+    // Function to move the pupils based on cursor position
+    function movePupils(e: MouseEvent) {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      
+      // Get the position of each eye
+      const leftEyeRect = (leftPupil.parentElement as HTMLElement).getBoundingClientRect();
+      const rightEyeRect = (rightPupil.parentElement as HTMLElement).getBoundingClientRect();
+      
+      // Calculate the left eye position
+      const leftEyeCenterX = leftEyeRect.left + leftEyeRect.width / 2;
+      const leftEyeCenterY = leftEyeRect.top + leftEyeRect.height / 2;
+      
+      // Calculate the right eye position
+      const rightEyeCenterX = rightEyeRect.left + rightEyeRect.width / 2;
+      const rightEyeCenterY = rightEyeRect.top + rightEyeRect.height / 2;
+      
+      // Calculate the angle for each eye
+      const leftAngleX = (mouseX - leftEyeCenterX) / window.innerWidth * 3;
+      const leftAngleY = (mouseY - leftEyeCenterY) / window.innerHeight * 3;
+      const rightAngleX = (mouseX - rightEyeCenterX) / window.innerWidth * 3;
+      const rightAngleY = (mouseY - rightEyeCenterY) / window.innerHeight * 3;
+      
+      // Limit the movement (20% of the eye size)
+      const maxMove = 20;
+      
+      // Apply the movement with smooth transition
+      leftPupil.style.transform = `translate(${Math.min(maxMove, Math.max(-maxMove, leftAngleX * 100))}%, ${Math.min(maxMove, Math.max(-maxMove, leftAngleY * 100))}%)`;
+      rightPupil.style.transform = `translate(${Math.min(maxMove, Math.max(-maxMove, rightAngleX * 100))}%, ${Math.min(maxMove, Math.max(-maxMove, rightAngleY * 100))}%)`;
+    }
+    
+    // Function to make the dog react to click
+    function puppyReact() {
+      // Add the animation class
+      head.classList.add('head-tilt');
+      leftEar.classList.add('ear-wiggle');
+      rightEar.classList.add('ear-wiggle');
+      
+      // Remove the class after animation completes
+      setTimeout(() => {
+        head.classList.remove('head-tilt');
+        leftEar.classList.remove('ear-wiggle');
+        rightEar.classList.remove('ear-wiggle');
+      }, 1000);
+    }
+    
+    // Function to make the dog blink occasionally
+    function randomBlink() {
+      const leftEyeEl = document.querySelector('#puppy-cursor-follower .eye.left') as HTMLElement;
+      const rightEyeEl = document.querySelector('#puppy-cursor-follower .eye.right') as HTMLElement;
+      
+      // Add blink class
+      leftEyeEl.classList.add('blink');
+      rightEyeEl.classList.add('blink');
+      
+      // Remove blink class
+      setTimeout(() => {
+        leftEyeEl.classList.remove('blink');
+        rightEyeEl.classList.remove('blink');
+      }, 200);
+      
+      // Schedule next blink
+      const nextBlink = Math.random() * 5000 + 2000; // Between 2-7 seconds
+      setTimeout(randomBlink, nextBlink);
+    }
+    
+    // Add event listeners
+    document.addEventListener('mousemove', movePupils);
+    document.addEventListener('click', puppyReact);
+    
+    // Start random blinking
+    setTimeout(randomBlink, 3000);
+  });
+</script>
+
+<style>
+  #puppy-cursor-follower {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none; /* Allow clicks to pass through */
+  }
+  
+  .puppy-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .puppy {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .head {
+    position: relative;
+    width: 80px;
+    height: 70px;
+    background-color: #D2B48C;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+  }
+  
+  .ears {
+    position: absolute;
+    width: 100%;
+    top: -20px;
+  }
+  
+  .ear {
+    position: absolute;
+    width: 30px;
+    height: 40px;
+    background-color: #C19A6B;
+    border-radius: 50% 50% 0 0;
+    transition: transform 0.3s ease;
+  }
+  
+  .ear.left {
+    left: 5px;
+    transform: rotate(-15deg);
+  }
+  
+  .ear.right {
+    right: 5px;
+    transform: rotate(15deg);
+  }
+  
+  .ear-wiggle {
+    animation: wiggle 0.5s ease-in-out;
+  }
+  
+  .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .eyes {
+    position: absolute;
+    top: 25px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .eye {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: height 0.1s ease;
+  }
+  
+  .eye.blink {
+    height: 1px;
+  }
+  
+  .pupil {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  
+  .muzzle {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 20px;
+    background-color: #E6BEAE;
+    border-radius: 40% 40% 50% 50%;
+  }
+  
+  .nose {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 6px;
+    background-color: #333;
+    border-radius: 50%;
+  }
+  
+  .mouth {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 4px;
+    background-color: #8B4513;
+    border-radius: 0 0 50% 50%;
+  }
+  
+  /* Animations */
+  .head-tilt {
+    animation: tilt 1s ease;
+  }
+  
+  @keyframes tilt {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+    100% { transform: rotate(0); }
+  }
+  
+  @keyframes wiggle {
+    0% { transform: rotate(-15deg); }
+    33% { transform: rotate(-25deg); }
+    66% { transform: rotate(-5deg); }
+    100% { transform: rotate(-15deg); }
+  }
+</style>

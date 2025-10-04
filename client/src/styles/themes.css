@@ -1,0 +1,130 @@
+/* This file contains additional theme-specific styles for common components */
+
+/* Card styles for different themes */
+
+/* Default theme cards */
+.theme-default .card {
+  background-color: #1e293b; /* bg-slate-800 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  border: 1px solid #334155; /* border border-slate-700 */
+}
+
+/* 80s Retro theme cards */
+.theme-80s-retro .card {
+  background: linear-gradient(135deg, #2b0549, #3b075f);
+  border: 2px solid #00f9ff;
+  box-shadow: 0 0 20px rgba(0, 249, 255, 0.4), inset 0 0 10px rgba(255, 0, 170, 0.3);
+}
+
+.theme-80s-retro .card h2 {
+  text-shadow: 2px 2px 0 #ff00aa;
+  color: #00f9ff;
+}
+
+/* Terminal Classic theme cards */
+.theme-terminal-classic .card {
+  background-color: #001100;
+  border: 1px solid #0f0;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), inset 0 0 5px rgba(0, 255, 0, 0.2);
+}
+
+.theme-terminal-classic .card::before {
+  content: "> displaying data...";
+  display: block;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+/* Hand-Sketched theme cards */
+.theme-hand-sketched .card {
+  background-color: white;
+  border: 2px solid #333;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 #333;
+  position: relative;
+  transform: rotate(-0.5deg);
+}
+
+.theme-hand-sketched .card h2 {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1px;
+}
+
+/* Steampunk theme cards */
+.theme-steampunk .card {
+  background: #462f1d;
+  border: 2px solid #6e4a1f;
+  border-radius: 5px;
+  box-shadow: 
+    inset 0 0 10px rgba(217, 187, 145, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.theme-steampunk .card::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background: #d9bb91;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #d9bb91;
+}
+
+/* Fantasy Realm theme cards */
+.theme-fantasy-realm .card {
+  background: linear-gradient(to bottom, #1a3b4d, #0a1f2e);
+  border: 1px solid #4a90a8;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(74, 144, 168, 0.5);
+}
+
+.theme-fantasy-realm .card::before {
+  content: "✧";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #4a90a8;
+  opacity: 0.7;
+}
+
+/* Button styles already defined in ThemeSwitcher.astro */
+
+/* Form elements */
+.theme-80s-retro input, .theme-80s-retro select, .theme-80s-retro textarea {
+  background: #000;
+  color: #00f9ff;
+  border: 2px solid #ff00aa;
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.5);
+}
+
+.theme-terminal-classic input, .theme-terminal-classic select, .theme-terminal-classic textarea {
+  background: #000;
+  color: #0f0;
+  border: 1px solid #0f0;
+  font-family: 'Courier New', monospace;
+}
+
+.theme-hand-sketched input, .theme-hand-sketched select, .theme-hand-sketched textarea {
+  background: #fff;
+  border: 2px dashed #333;
+  box-shadow: 2px 2px 0 #333;
+}
+
+.theme-steampunk input, .theme-steampunk select, .theme-steampunk textarea {
+  background: #2c2520;
+  color: #d9bb91;
+  border: 1px solid #6e4a1f;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.theme-fantasy-realm input, .theme-fantasy-realm select, .theme-fantasy-realm textarea {
+  background: #0a1f2e;
+  color: #e5ddd0;
+  border: 1px solid #4a90a8;
+  box-shadow: 0 0 8px rgba(74, 144, 168, 0.3);
+}
